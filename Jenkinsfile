@@ -32,5 +32,11 @@ pipeline {
                 }
             }
         }
+        stage ("Crear imagen docker") {
+            steps {
+                sh "docker build -t backend-nest-test-grd ."
+            }
+            
+        }
     }
 }
