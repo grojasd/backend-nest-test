@@ -1,0 +1,62 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: lab-grd
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-nest-test-grd
+  namespace: lab-grd
+  labels:
+    app: backend-nest-test-grd
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: backend-nest-test-grd
+  template:
+    metadata:
+      labels:
+        app: backend-nest-test-grd
+    spec:
+      containers:
+      - name: backend-nest-test-grd
+        image: us-west1-docker.pkg.dev/lab-agibiz/docker-repository/backend-nest-test-grd
+        imagePullPolicy: Always
+      imagePullSecrets:
+      - name: regcred
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-nest-test-svc
+  namespace: lab-grd
+  labels:
+    app: backend-nest-test-svc
+spec:
+  selector:
+    app: backend-nest-test-grd
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 3000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-backend-nest-test-grd
+  namespace: lab-grd
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: grd.devops.cl
+    http:
+      paths:
+      - path: /
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: backend-nest-test-svc
+            port:
+              number: 80
