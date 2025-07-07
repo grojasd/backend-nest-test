@@ -1,8 +1,8 @@
 pipeline {
     agent any
-}
-stages {
-    stage ("Proceso de build y test") {
+
+    stages {
+        stage ("Proceso de build y test") {
             agent {
                 docker {
                     image 'node:22'
@@ -18,4 +18,5 @@ stages {
             }
             
         }
+    }
 }
